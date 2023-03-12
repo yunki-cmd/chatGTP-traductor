@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GTP traductor</title>
+  <script src="index.js" defer></script>
+</head>
+
+<body>
+  <div style="display: flex; justify-content: center;flex-wrap: wrap; flex-direction: column;  margin-top: 3em;">
+    <div style="display: flex; justify-content: space-between; margin: auto; width: 80%;">
+      <textarea name="promts" id="promts" style="resize: none; text-align: left; width: 30%; margin:auto" rows="1">
+      </textarea>
+      <div style="position: relative; left: -220px; width: 20%;">
+        <label for="idiomas">Idiomas:</label>
+        <select id="idiomas" name="idiomas">
+          <option value="chino">Chino mandarín</option>
+          <option value="espanol">Español</option>
+          <option value="ingles">Inglés</option>
+          <option value="hindi">Hindi</option>
+          <option value="arabe">Árabe</option>
+          <option value="bengali">Bengalí</option>
+          <option value="portugues">Portugués</option>
+          <option value="ruso">Ruso</option>
+          <option value="japones">Japonés</option>
+          <option value="germanicas">Lenguas germánicas</option>
+        </select>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: center; margin-top: 2rem; gap: 1rem;">
+      <button style="width: 50px; height: 30px; text-align: center;" id="promtsBtn">enviar</button>
+      <button style="width: 50px; height: 30px; text-align: center;" id="promtsBtnReset">Reset</button>
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: center; margin-top: 2em;">
+    <textarea name="response" id="response-chat" rows="1"
+      style="resize: none; text-align: left; width: 40%; margin:auto"></textarea>
+  </div>
+
+  </textarea>
+</body>
+
+</html>
