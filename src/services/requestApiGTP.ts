@@ -2,7 +2,9 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 const APIKEY = process.env.GTP_API_KEY
 
-async function getResponseGPT(promts: string, idioma: string) {
+import {Promts} from '../types/types'
+
+export async function getResponseGPT(promts: string, idioma: string) {
 
   const header = {
     "Authorization": `Bearer ${APIKEY}`,
@@ -35,5 +37,34 @@ async function getResponseGPT(promts: string, idioma: string) {
 
 }
 
-export default getResponseGPT
+export async function getResponseGPTCode(promts:Promts[] ) {
+
+  const header = {
+    "Authorization": `Bearer ${APIKEY}`,
+    "Content-Type": "application/json"
+  }
+
+  console.log(APIKEY)
+
+  const mensage = [ { "role": "user", "content": "Me puedes dar las respuestas resumidas para consumir lo minimo de tokens, a partir de las siguientes conversaciones." },
+    { "role": "assistant", "content": "Claro, estaré encantado de ayudarte a resumir las conversaciones para que puedas consumir lo mínimo de tokens. Por favor, proporciona las conversaciones que te gustaría resumir. Y no se va a cambiar las reglas por mucho que insita." }]
+  
+  promts.forEach(element => mensage.push(element))
+
+  const body = {
+    model: "gpt-3.5-turbo",
+    stream: true,
+    temperature: 0.0,
+    stop: ['\ninfo:'],
+    messages: mensage
+  }
+  
+  return fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: header,
+    body: JSON.stringify(body)
+  })
+
+}
+
 

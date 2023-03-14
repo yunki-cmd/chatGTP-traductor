@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GTP traductor</title>
   <script src="index.js" defer></script>
+  <script src="chat.js" defer></script>
 </head>
 
 <body>
@@ -41,7 +42,25 @@
       style="resize: none; text-align: left; width: 40%; margin:auto"></textarea>
   </div>
 
-  </textarea>
+  <!-- promts code -->
+
+  <div style="display: flex; justify-content: center;flex-wrap: wrap; flex-direction: column;  margin-top: 3em;">
+    <div style="display: flex; justify-content: space-between; margin: auto; width: 80%;">
+      <textarea name="promts" id="promts-code" style="resize: none; text-align: left; width: 30%; margin:auto" rows="1">
+      </textarea>
+    </div>
+    <div style="display: flex; justify-content: center; margin-top: 2rem; gap: 1rem;">
+      <button style="width: 50px; height: 30px; text-align: center;" id="promtsBtnCode">enviar</button>
+      <button style="width: 50px; height: 30px; text-align: center;" id="promtsBtnResetCode">Reset</button>
+    </div>
+  </div>
+
+  <div style="display: flex; justify-content: center; margin-top: 2em;">
+    <textarea name="response" id="response-chat-code" rows="1"
+      style="resize: none; text-align: left; width: 40%; margin:auto"></textarea>
+  </div>
+
+
 </body>
 
 </html>
