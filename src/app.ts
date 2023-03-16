@@ -83,100 +83,62 @@ io.on('connection', (socket) => {
   socket.on('chat/code', async (data) => {
     console.log(data)
 
-    const response: any = await getResponseGPTCode(data)
+    try {
+      const response: any = await getResponseGPTCode(data)
+      if (!response.ok) {
+        console.error(response.statusText)
+        socket.disconnect()
+      }
 
-    if (!response.ok) {
-      console.error(response.statusText)
+      const streamData = async () => {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf8');
+  
+        while (true) {
+          const { done, value } = await reader.read();
+  
+          const chunk = decoder.decode(value);
+  
+          if (done) {
+            socket.emit('streamData', '[DONE]');
+            socket.disconnect()
+            break;
+          }
+  
+          const [data] = chunk
+            .split(/\n/)
+            .filter(Boolean)
+            .map((line) => line.replace('data: ', '').trim());
+  
+          if (data === '[DONE]') {
+            socket.emit('streamData', '[DONE]');
+            console.log("disconeted")
+            socket.disconnect()
+            break;
+          }
+  
+          try {
+            const json = JSON.parse(data);
+            const { content } = json.choices?.[0]?.delta;
+            console.log({ content });
+            content && socket.emit('streamData', JSON.stringify(content));
+          } catch (error) {
+            console.log(data);
+            console.error(error);
+          }
+        }
+      };
+      streamData();
+    } catch (error) {
+      console.log(JSON.stringify(error))
+      socket.emit('streamData', "[DONE]")
       socket.disconnect()
     }
 
-    const streamData = async () => {
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder('utf8');
-
-      while (true) {
-        const { done, value } = await reader.read();
-
-        const chunk = decoder.decode(value);
-
-        if (done) {
-          socket.emit('streamData', '[DONE]');
-          socket.disconnect()
-          break;
-        }
-
-        const [data] = chunk
-          .split(/\n/)
-          .filter(Boolean)
-          .map((line) => line.replace('data: ', '').trim());
-
-        if (data === '[DONE]') {
-          socket.emit('streamData', '[DONE]');
-          console.log("disconeted")
-          socket.disconnect()
-          break;
-        }
-
-        try {
-          const json = JSON.parse(data);
-          const { content } = json.choices?.[0]?.delta;
-          console.log({ content });
-          content && socket.emit('streamData', JSON.stringify(content));
-        } catch (error) {
-          console.log(data);
-          console.error(error);
-        }
-      }
-    };
-
-    streamData();
 
   })
 
 })
-
-
-/* res.writeHead(200, {
-  'Access-Control-Allow-Origin': '*',
-  Connection: 'keep-alive',
-  'Cache-Control': 'no-cache, no-transform',
-  'Content-Encoding': 'none',
-  'Content-Type': 'text/event-stream; charset=utf-8'
-})
- 
-const reader = response.body.getReader();
-const decoder = new TextDecoder('utf8');
- 
-while (true) {
-  
-  // el value no es un string, sino son bits
-  const { done, value } = await reader.read()
- 
-  // codificamos el bit a un string utf8
-  const chunk = decoder.decode(value)
-
-  if (done) {
-    // cerrar la respuesta
-    return res.end('data: [DONE]\n\n');
-  }
- 
-  const [data] = chunk
-    .split(/\n/)
-    .filter(Boolean)
-    .map(line => line.replace('data: ', '').trim())
-  
-  if (data === '[DONE]') {
-    return res.end('data: [DONE]\n\n');
-  }
- 
-  try {
-    const json = JSON.parse(data)
-    const { content } = json.choices?.[0]?.delta
-    content && res.write(`data: ${JSON.stringify(content)}\n\n`)
-  } catch (error) {
-    console.error(error)
-  }
-} */
 
 httpServer.listen(3000, () => {
   console.log('Servidor escuchando en http://localhost:3000');

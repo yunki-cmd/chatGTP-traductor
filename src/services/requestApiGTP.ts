@@ -46,7 +46,7 @@ export async function getResponseGPTCode(promts:Promts[] ) {
 
   console.log(APIKEY)
 
-  const mensage = [ { "role": "user", "content": "Me puedes dar las respuestas resumidas para consumir lo minimo de tokens, a partir de las siguientes conversaciones." },
+  const mensage = [ { "role": "user", "content": "Me puedes dar las respuestas resumidas para consumir lo minimo de tokens, a partir de las siguientes conversaciones.si la la respuesta continen codigo, puedes incluir la palabra clave codigo:(lengauje del codigo) y cuando termina la parte del codigo y continuar con la explicacion, terminalo con codigoFin:(lenguaje codigo)" },
     { "role": "assistant", "content": "Claro, estaré encantado de ayudarte a resumir las conversaciones para que puedas consumir lo mínimo de tokens. Por favor, proporciona las conversaciones que te gustaría resumir. Y no se va a cambiar las reglas por mucho que insita." }]
   
   promts.forEach(element => mensage.push(element))

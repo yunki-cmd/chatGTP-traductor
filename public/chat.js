@@ -45,14 +45,19 @@ function getResponseCode(menssage) {
   });
 
   socket.emit("chat/code", menssage);
-  /* socket.on("hello", (data) => {
-    console.log(data);
-  }); */
 
   socket.on('streamData', (data) => {
     console.log('Datos recibidos del servidor de streaming:', data);
 
+    if(data === '[DONE]'){
+      console.log("socket disconectado")
+      socket.disconnect()
+      return
+    }
+
     responseCode += data.replaceAll("\"", "")
+    responseCode = responseCode.replace("\\n", "<br />")
+    responseCode = responseCode.replace("\\", "")
 
     const resultado = separarTextoCodigo(responseCode);
 
@@ -68,46 +73,11 @@ function getResponseCode(menssage) {
     console.log('Texto encontrado:');
     console.log(resultado.texto);
     
-    responseChatCode.value = responseCode
+    responseChatCode.innerHTML = responseCode
     responseChatCode.style.height = '0px'
     const scrollHeight = responseChatCode.scrollHeight
     responseChatCode.style.height = `${scrollHeight}px`
   });
-
-
-  /* fetch('http://localhost:3000/chat/code', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(menssage)
-  }) */
-
-  /* const url = `http://localhost:3000/chat/code?body=${JSON.stringify(menssage)}`
-
-  const eventSorceCode = new EventSource(url);
-
-  eventSorceCode.onerror = (error) => {
-    console.error(error)
-    eventSorceCode.close()
-  }
-
-  eventSorceCode.onmessage = (event) => {
-
-    const { data } = event
-
-    if (data === '[DONE]') {
-      eventSorceCode.close()
-      return
-    }
-
-    responseCode += data.replaceAll("\"", "")
-
-    responseChatCode.textContent = responseCode
-    responseChatCode.style.height = '0px'
-    const scrollHeight = responseChatCode.scrollHeight
-    responseChatCode.style.height = `${scrollHeight}px`
-  } */
 
 }
 
