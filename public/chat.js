@@ -3,6 +3,7 @@ const promtsBtnCode = document.getElementById('promtsBtnCode')
 const responseChatCode = document.getElementById('response-chat-code')
 const promtsBtnResetCode = document.getElementById('promtsBtnResetCode')
 
+
 let responseCode = ''
 
 promtsBtnCode.addEventListener('click', (e) => {
@@ -49,17 +50,23 @@ function getResponseCode(menssage) {
   socket.on('streamData', (data) => {
     console.log('Datos recibidos del servidor de streaming:', data);
 
-    if(data === '[DONE]'){
+    if (data === '[DONE]') {
       console.log("socket disconectado")
       socket.disconnect()
       return
     }
 
-    responseCode += data.replaceAll("\"", "")
-    responseCode = responseCode.replace("\\n", "<br />")
-    responseCode = responseCode.replace("\\", "")
+    let datarepalce = data.replaceAll("\"", "").replaceAll("'", "\"")
 
-    const resultado = separarTextoCodigo(responseCode);
+    responseCode += datarepalce
+    responseCode = responseCode.replace(/\\n+/, "")
+
+
+
+    console.log(responseCode)
+
+
+    /* const resultado = separarTextoCodigo(responseCode);
 
     if (resultado.codigo) {
       console.log('Código encontrado:');
@@ -69,37 +76,14 @@ function getResponseCode(menssage) {
         console.log('---');
       });
     }
-    
+
     console.log('Texto encontrado:');
-    console.log(resultado.texto);
-    
-    responseChatCode.innerHTML = responseCode
+    console.log(resultado.texto); */
+
+    responseChatCode.innerHTML = markdown.toHTML(responseCode)
     responseChatCode.style.height = '0px'
     const scrollHeight = responseChatCode.scrollHeight
     responseChatCode.style.height = `${scrollHeight}px`
   });
 
-}
-
-
-function separarTextoCodigo(texto) {
-  // Buscar el código dentro del texto
-  const regex = /```([^`\n]*)\n([\s\S]*?)\n```/gm;
-  const codigo = [];
-  let match;
-  
-  while ((match = regex.exec(texto)) !== null) {
-    const lenguaje = match[1].trim();
-    const codigoSinSalto = match[2].replace(/\n$/, '');
-    const explicacion = texto.substring(0, match.index) + texto.substring(regex.lastIndex);
-    codigo.push({ lenguaje, codigo: codigoSinSalto, explicacion });
-  }
-
-  // Si no se encontró código, devolver solo el texto
-  if (codigo.length === 0) {
-    return { texto };
-  }
-
-  // Si se encontró código, devolverlo junto con el texto que lo rodea
-  return { codigo, texto: codigo[0].explicacion };
 }

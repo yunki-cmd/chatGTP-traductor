@@ -98,6 +98,8 @@ io.on('connection', (socket) => {
           const { done, value } = await reader.read();
   
           const chunk = decoder.decode(value);
+
+          console.log(chunk)
   
           if (done) {
             socket.emit('streamData', '[DONE]');
@@ -119,10 +121,13 @@ io.on('connection', (socket) => {
   
           try {
             const json = JSON.parse(data);
-            const { content } = json.choices?.[0]?.delta;
-            console.log({ content });
+            let { content } = json.choices?.[0]?.delta;
+            if (content != undefined) {
+              content = content.replace("\"","'")
+            }
             content && socket.emit('streamData', JSON.stringify(content));
           } catch (error) {
+            socket.disconnect()
             console.log(data);
             console.error(error);
           }
